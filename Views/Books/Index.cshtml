@@ -1,0 +1,116 @@
+﻿@model ProdavnicaZaKnigi.ViewModels.BookFilterViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>𝘈𝘥𝘥 𝘵𝘩𝘦 𝘣𝘰𝘰𝘬𝘴 𝘺𝘰𝘶 𝘸𝘢𝘯𝘵 𝘵𝘰 𝘣𝘶𝘺</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-controller="Books" class=" filter " asp-action="Index" method="get">
+
+    <label>Title:</label>
+    <input type="text" asp-for="TitleFilter" />
+
+    <label>Author:</label>
+    <select asp-for="SelectedAuthorId" asp-items="@Model.Authors">
+        <option value="">All Authors</option>
+    </select>
+
+
+    <label>Genre:</label>
+    <select asp-for="SelectedGenreId" asp-items="@Model.Genres">
+        <option value="">All Genres</option>
+    </select>
+
+
+    <button type="submit">Filter</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Books[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Books[0].Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Books[0].BookGenres)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Books[0].YearPublished)
+            </th>
+
+
+            <th>
+                @Html.DisplayNameFor(model => model.Books[0].FrontPage)
+            </th>
+            <th>
+                Rating
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Books)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @if (item.AuthorId != null)
+                    {
+                        <a asp-controller="Authors" asp-action="Details" asp-route-id="@item.AuthorId"> @Html.DisplayFor(modelItem => item.Author.FullName)</a>
+                    }
+
+                </td>
+                <td>
+                    @foreach (var genre in item.BookGenres)
+                    {
+                        <a asp-asp-controller="Genres" asp-action="Details" asp-route-id="@genre.GenreId">
+                            @genre.Genre.GenreName <br />
+                        </a>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.YearPublished)
+                </td>
+                <td>
+                <img src="@item.FrontPage" alt="Front Page" class="slika">
+
+                <td>
+
+                        @item.AverageRating()
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const productImages = document.querySelectorAll('.product-image-container');
+
+        productImages.forEach(function (container) {
+            const largeImage = container.querySelector('.product-large-image');
+
+            container.addEventListener('mouseenter', function () {
+                largeImage.style.display = 'block';
+            });
+
+            container.addEventListener('mouseleave', function () {
+                largeImage.style.display = 'none';
+            });
+        });
+    });
+</script>

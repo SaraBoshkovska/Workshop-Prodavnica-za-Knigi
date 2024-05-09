@@ -1,0 +1,13 @@
+﻿
+.slika {
+    height: 17vw;
+    width: 13vw;
+}
+
+tr, .backg, .filter, .row {
+    background-color: whitesmoke;
+}
+#slikidetails {
+    height: 17vw;
+    width: 13vw;
+}

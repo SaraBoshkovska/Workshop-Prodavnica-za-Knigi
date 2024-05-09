@@ -1,0 +1,101 @@
+﻿@model ProdavnicaZaKnigi.ViewModels.CreateBookViewModel
+
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Book</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="book.Title" class="control-label"></label>
+                <input asp-for="book.Title" class="form-control" />
+                <span asp-validation-for="book.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="book.AuthorId" class="control-label"></label>
+                <select asp-for="book.AuthorId" class="form-control" asp-items="ViewBag.AuthorId">
+                    <option value="">Select</option>
+                </select>
+
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Genres</label>
+                <select asp-for="SelectedGenres" class="form-control js-example-basic-multiple" asp-items="Model.GenreList" multiple></select>
+                <span asp-validation-for="SelectedGenres" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="book.YearPublished" class="control-label"></label>
+                <input asp-for="book.YearPublished" class="form-control" />
+                <span asp-validation-for="book.YearPublished" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="book.NumPages" class="control-label"></label>
+                <input asp-for="book.NumPages" class="form-control" />
+                <span asp-validation-for="book.NumPages" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="book.Description" class="control-label"></label>
+                <input asp-for="book.Description" class="form-control" />
+                <span asp-validation-for="book.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="book.Publisher" class="control-label"></label>
+                <input asp-for="book.Publisher" class="form-control" />
+                <span asp-validation-for="book.Publisher" class="text-danger"></span>
+            </div>
+            <p></p>
+            <div class="form-group">
+                <label class="control-label">Download URL</label>
+                <input type="file" name="DownloadUrl" />
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert" style="margin-top:20px">
+                        @ViewBag.Message
+                    </div>
+                }
+            </div>
+            <p></p>
+            <div class="form-group">
+                <label class="control-label">Front Page</label>
+                <input type="file" name="FrontPage" />
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert" style="margin-top:20px">
+                        @ViewBag.Message
+                    </div>
+                }
+                <p></p>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $("#SelectedGenres").select2();
+            });
+        </script>
+
+    }
+}
