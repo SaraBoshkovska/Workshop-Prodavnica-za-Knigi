@@ -7,7 +7,10 @@
 <h1>𝘈𝘥𝘥 𝘵𝘩𝘦 𝘣𝘰𝘰𝘬𝘴 𝘺𝘰𝘶 𝘸𝘢𝘯𝘵 𝘵𝘰 𝘣𝘶𝘺</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="search-button">Create New</a>
+    }
 </p>
 <form asp-controller="Books" class=" filter " asp-action="Index" method="get">
 
@@ -39,7 +42,7 @@
                 @Html.DisplayNameFor(model => model.Books[0].Author)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Books[0].BookGenres)
+                Book Genres
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Books[0].YearPublished)
@@ -47,7 +50,7 @@
 
 
             <th>
-                @Html.DisplayNameFor(model => model.Books[0].FrontPage)
+               Front Page
             </th>
             <th>
                 Rating
@@ -89,9 +92,20 @@
                 </td>
 
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                        {
+                        <h3><a asp-controller="UserBooks" asp-action="AddBookBought" asp-route-bookid="@item.Id">Buy this Book</a></h3>
+                        }
+
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        } |
+                      <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
                 </td>
             </tr>
         }

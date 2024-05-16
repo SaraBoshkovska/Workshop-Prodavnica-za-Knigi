@@ -1,20 +1,63 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ProdavnicaZaKnigi.Areas.Identity.Data;
+
 
 namespace ProdavnicaZaKnigi.Models
 {
+
     public class SeedData
     {
+        public static async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<ProdavnicaZaKnigiUser>>();
+            IdentityResult roleResult;
+            //Add Admin Role
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin")); }
+            ProdavnicaZaKnigiUser user = await UserManager.FindByEmailAsync("admin@prodavnicazaknigi.com");
+            if (user == null)
+            {
+                var User = new ProdavnicaZaKnigiUser();
+                User.Email = "admin@prodavnicazaknigi.com";
+                User.UserName = "admin@prodavnicazaknigi.com";
+                string userPWD = "Admin123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Admin
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Admin"); }
+            }
+            var roleCheck2 = await RoleManager.RoleExistsAsync("User");
+            if (!roleCheck2)
+            {
+                roleResult = await RoleManager.CreateAsync(new IdentityRole("User"));
+            }
+            ProdavnicaZaKnigiUser user1 = await UserManager.FindByEmailAsync("user1@mvcbook.com");
+            if (user1 == null)
+            {
+                var User = new ProdavnicaZaKnigiUser();
+                User.Email = "user1@mvcbook.com";
+                User.UserName = "user1@mvcbook.com";
+                string userPWD = "User1234";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                if (chkUser.Succeeded)
+                {
+                    await UserManager.AddToRoleAsync(User, "User");
+                }
+            }
+        }
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new ProdavnicaZaKnigiContext(
                 serviceProvider.GetRequiredService<
                     DbContextOptions<ProdavnicaZaKnigiContext>>()))
             {
+                CreateUserRoles(serviceProvider).Wait();
                 if (context.Book.Any() || context.Author.Any() || context.Genre.Any() || context.Review.Any())
                 {
                     return;
@@ -56,8 +99,11 @@ namespace ProdavnicaZaKnigi.Models
                         "American author Robert Greene.The book is a New York Times bestseller, " +
                         "selling over 1.2 million copies in the United States.",
                         DownloadUrl = "https://www.ciuohecampus.com/images/concise48.pdf",
-                        FrontPage = "https://upload.wikimedia.org/wikipedia/en/9/9d/GreeneRobert-48LawsOfPower.jpg"
-
+                        FrontPage = "https://upload.wikimedia.org/wikipedia/en/9/9d/GreeneRobert-48LawsOfPower.jpg",
+                        Reviews = new List<Review>
+                        {
+                            new Review{BookId=1, AppUser="Mary Joe",Comment="It's a good book, but it's similar to others", Rating=3 }
+                        }
                     },
                     new Book
                     {
@@ -73,7 +119,10 @@ namespace ProdavnicaZaKnigi.Models
                         Publisher = "Roberts Brothers",
                         DownloadUrl = "https://www.defence.lk/upload/ebooks/Little%20Women.pdf",
                         FrontPage = "https://upload.wikimedia.org/wikipedia/commons/f/f9/Houghton_AC85.A%E2%84%93194L.1869_pt.2aa_-_Little_Women%2C_title.jpg",
-                   
+                        Reviews = new List<Review>
+                        {
+                            new Review{BookId=2, AppUser="Lilly Bay",Comment="It's a good book, but it's similar to others", Rating=3 }
+                        }
                     },
                     new Book
                     {
@@ -88,7 +137,11 @@ namespace ProdavnicaZaKnigi.Models
                         "judgments and comes to appreciate the difference between superficial goodness and actual goodness.",
                         
                         DownloadUrl = "https://www.gutenberg.org/files/1342/old/pandp12p.pdf",
-                        FrontPage = "https://upload.wikimedia.org/wikipedia/commons/1/17/PrideAndPrejudiceTitlePage.jpg"
+                        FrontPage = "https://upload.wikimedia.org/wikipedia/commons/1/17/PrideAndPrejudiceTitlePage.jpg",
+                        Reviews = new List<Review>
+                        {
+                            new Review{BookId=3, AppUser="Alex Vouge",Comment="It's a good book, but it's similar to others", Rating=3 }
+                        }
                     },
                      new Book
                      {
@@ -103,7 +156,11 @@ namespace ProdavnicaZaKnigi.Models
                          "the novel tells of his coming-of-age in Los Angeles during the Great Depression.",
                          
                          DownloadUrl = "https://englishonlineclub.com/pdf/Charles%20Bukowski%20-%20Ham%20on%20Rye%20%5BEnglishOnlineClub.com%5D.pdf",
-                         FrontPage = "https://upload.wikimedia.org/wikipedia/en/2/20/HamOnRye.jpg"
+                         FrontPage = "https://upload.wikimedia.org/wikipedia/en/2/20/HamOnRye.jpg",
+                         Reviews = new List<Review>
+                        {
+                            new Review{BookId=4, AppUser="Phillip Harris",Comment="It's a good book, but it's similar to others", Rating=3 }
+                        }
                      },
                       new Book
                       {
@@ -118,7 +175,11 @@ namespace ProdavnicaZaKnigi.Models
                           "subsequently struggles to adjust to this new condition. ",
                          
                           DownloadUrl = "https://psychology.okstate.edu/faculty/jgrice/psyc4333/Franz_Kafka_The_Metamorphosis.pdf",
-                          FrontPage = "https://upload.wikimedia.org/wikipedia/commons/a/a5/Franz_Kafka_Die_Verwandlung_1916_Orig.-Pappband.jpg"
+                          FrontPage = "https://upload.wikimedia.org/wikipedia/commons/a/a5/Franz_Kafka_Die_Verwandlung_1916_Orig.-Pappband.jpg",
+                          Reviews = new List<Review>
+                        {
+                            new Review{BookId=5, AppUser="Denver Joe",Comment="It's a good book, but it's similar to others", Rating=3 }
+                        }
                       }
                     );
                 context.SaveChanges();

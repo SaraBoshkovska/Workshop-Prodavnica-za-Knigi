@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ProdavnicaZaKnigi.Models.Book>
+
+
+
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>My Books List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Front Page</th>
+            <th>Download</th>
+            <th>Write A Review</th>
+            
+        </tr>
+    </thead>
+    
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Author.FullName)</td>
+                <td>
+                    @if (item.FrontPage != null)
+                    {
+                        <img src="@item.FrontPage" class="slika" />
+                    }
+                    else
+                    {
+                        <img src="~/path/to/default/image" class="slika" />
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Content(item.DownloadUrl)" target="_blank">Download Here</a>
+
+                </td>
+                <td>
+                    <button><a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">Details</a></button>
+                    <button><a asp-controller="Reviews" asp-action="WriteReviewFromUser" asp-route-productid="@item.Id">Write a Review!</a></button>
+                </td>
+                </tr>
+
+                }
+  
+   </table>

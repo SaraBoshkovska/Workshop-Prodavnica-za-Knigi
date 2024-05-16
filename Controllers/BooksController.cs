@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using cstore.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +73,8 @@ namespace ProdavnicaZaKnigi.Controllers
             var book = await _context.Book
                 .Include(b => b.Author)
                 .Include(b => b.BookGenres).ThenInclude(b => b.Genre)
+               
+                .Include(b=>b.Reviews)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (book == null)
             {
@@ -83,6 +86,7 @@ namespace ProdavnicaZaKnigi.Controllers
 
 
         // GET: Books/Create
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
 
@@ -105,6 +109,7 @@ namespace ProdavnicaZaKnigi.Controllers
         // POST: Books/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateBookViewModel viewModel, IFormFile DownloadUrl, IFormFile FrontPage )
@@ -153,6 +158,7 @@ namespace ProdavnicaZaKnigi.Controllers
         }
 
         // GET: Books/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -181,6 +187,7 @@ namespace ProdavnicaZaKnigi.Controllers
         // POST: Books/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, EditBookViewModel viewmodel)
@@ -229,8 +236,9 @@ namespace ProdavnicaZaKnigi.Controllers
             ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", viewmodel.Book.AuthorId);
             return View(viewmodel);
         }
-      
+
         // GET: Books/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -250,6 +258,7 @@ namespace ProdavnicaZaKnigi.Controllers
         }
 
         // POST: Books/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

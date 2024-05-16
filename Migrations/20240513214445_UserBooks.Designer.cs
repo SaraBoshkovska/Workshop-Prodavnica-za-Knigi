@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProdavnicaZaKnigi.Models;
 
@@ -11,9 +12,11 @@ using ProdavnicaZaKnigi.Models;
 namespace ProdavnicaZaKnigi.Migrations
 {
     [DbContext(typeof(ProdavnicaZaKnigiContext))]
-    partial class ProdavnicaZaKnigiContextModelSnapshot : ModelSnapshot
+    [Migration("20240513214445_UserBooks")]
+    partial class UserBooks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

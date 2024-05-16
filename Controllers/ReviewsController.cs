@@ -5,23 +5,31 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+
 using ProdavnicaZaKnigi.Models;
+using Microsoft.AspNetCore.Identity;
+using ProdavnicaZaKnigi.Areas.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProdavnicaZaKnigi.Controllers
 {
     public class ReviewsController : Controller
     {
         private readonly ProdavnicaZaKnigiContext _context;
+        private readonly UserManager<ProdavnicaZaKnigiUser> _userManager;
 
-        public ReviewsController(ProdavnicaZaKnigiContext context)
+        public ReviewsController(ProdavnicaZaKnigiContext context, UserManager<ProdavnicaZaKnigiUser> usermanager)
         {
             _context = context;
+            _userManager = usermanager;
         }
-
+        private Task<ProdavnicaZaKnigiUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
         // GET: Reviews
+
         public async Task<IActionResult> Index()
         {
             var prodavnicaZaKnigiContext = _context.Review.Include(r => r.Book);
+
             return View(await prodavnicaZaKnigiContext.ToListAsync());
         }
 
@@ -43,17 +51,40 @@ namespace ProdavnicaZaKnigi.Controllers
 
             return View(review);
         }
-
+        public async Task<IActionResult> WriteReviewFromUserAsync(int? productid)
+        {
+            ViewData["BookId"] = productid;
+            var book = _context.Book.AsQueryable().Where(p => p.Id == productid).FirstOrDefault();
+            ViewData["BookName"] = book.Title;
+            return View();
+        }
+        [HttpPost]
+        [Authorize(Roles = "User")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> WriteReviewFromUser([Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
+        {
+            ProdavnicaZaKnigiUser user = await GetCurrentUserAsync();
+            review.AppUser = user.UserName;
+            if (ModelState.IsValid)
+            {
+                _context.Add(review);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["BookId"] = review.BookId;
+            return View(review);
+        }
         // GET: Reviews/Create
         public IActionResult Create()
         {
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Id");
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Name");
             return View();
         }
 
         // POST: Reviews/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
@@ -69,6 +100,7 @@ namespace ProdavnicaZaKnigi.Controllers
         }
 
         // GET: Reviews/Edit/5
+     
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -88,6 +120,7 @@ namespace ProdavnicaZaKnigi.Controllers
         // POST: Reviews/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id, [Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
@@ -122,6 +155,7 @@ namespace ProdavnicaZaKnigi.Controllers
         }
 
         // GET: Reviews/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -141,6 +175,7 @@ namespace ProdavnicaZaKnigi.Controllers
         }
 
         // POST: Reviews/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)

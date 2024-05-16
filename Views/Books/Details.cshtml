@@ -38,6 +38,7 @@
                 <br />
             }
         </dd>
+       
 
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.YearPublished)
@@ -86,14 +87,50 @@
             </dd>
         </div>
         <dt class="col-sm-2">
-            Download Link
+            Reviews
         </dt>
         <dd class="col-sm-10">
-            <a href="@Model.DownloadUrl" target="_blank">Download</a>
+            @if (Model.Reviews != null && Model.Reviews.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var review in Model.Reviews)
+            {
+                <tr>
+                    <td>@review.AppUser</td>
+                    <td>@review.Rating</td>
+                    <td>@review.Comment</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No reviews yet.</p>
+    }
+</div>
         </dd>
+       
+        <div>
+            @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+            {
+                <a asp-controller="Users" asp-action="AddBookBought" asp-route-productid="@Model.Id">Buy this Book</a>
+            }
+        </div>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    } |
     <a asp-action="Index">Back to List</a>
 </div>
