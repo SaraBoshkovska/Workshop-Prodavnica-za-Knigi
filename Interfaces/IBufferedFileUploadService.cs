@@ -1,4 +1,4 @@
-﻿namespace cstore.Interfaces
+﻿namespace ProdavnicaZaKnigi.Interfaces
 {
     public interface IBufferedFileUploadService
     {

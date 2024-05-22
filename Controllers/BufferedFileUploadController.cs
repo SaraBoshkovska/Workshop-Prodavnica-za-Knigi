@@ -1,4 +1,4 @@
-﻿using cstore.Interfaces;
+﻿using ProdavnicaZaKnigi.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cstore.Controllers

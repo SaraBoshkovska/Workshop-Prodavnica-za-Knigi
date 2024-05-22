@@ -1,4 +1,4 @@
-﻿using cstore.Interfaces;
+﻿using ProdavnicaZaKnigi.Interfaces;
 
 namespace cstore.Services
 {
