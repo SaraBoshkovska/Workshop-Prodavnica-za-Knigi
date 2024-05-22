@@ -1,6 +1,6 @@
 ﻿using ProdavnicaZaKnigi.Interfaces;
 
-namespace cstore.Services
+namespace ProdavnicaZaKnigi.Services
 {
     public class BufferedFileUploadLocalService : IBufferedFileUploadService
     {

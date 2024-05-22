@@ -1,7 +1,7 @@
 ﻿using ProdavnicaZaKnigi.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace cstore.Controllers
+namespace ProdavnicaZaKnigi.Controllers
 {
     public class BufferedFileUploadController : Controller
     {
