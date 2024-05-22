@@ -1,5 +1,5 @@
-using cstore.Interfaces;
-using cstore.Services;
+using ProdavnicaZaKnigi.Interfaces;
+using ProdavnicaZaKnigi.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProdavnicaZaKnigi.Models;
